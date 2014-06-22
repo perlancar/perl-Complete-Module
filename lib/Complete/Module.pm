@@ -133,7 +133,7 @@ sub complete_module {
         }
     }
 
-    [uniq @res];
+    [sort(uniq(@res))];
 }
 
 1;
