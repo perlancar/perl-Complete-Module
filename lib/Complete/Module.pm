@@ -12,6 +12,7 @@ our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(complete_module);
 
 # VERSION
+# DATE
 
 $SPEC{complete_module} = {
     v => 1.1,
