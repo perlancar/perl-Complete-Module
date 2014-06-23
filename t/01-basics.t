@@ -34,9 +34,17 @@ my $dir = tempdir(CLEANUP => 1);
     is_deeply(complete_module(word=>"Bar::Mod3"), [qw/Bar::Mod3/]);
     is_deeply(complete_module(word=>"Bar::Mod3::"), [qw//]);
     is_deeply(complete_module(word=>"Bar::c"), [qw//]);
+
+    subtest "opt: separator" => sub {
+        is_deeply(complete_module(word=>"", separator=>'.'),
+                  [qw/Bar. Baz Foo Foo./]);
+        is_deeply(complete_module(word=>"Bar::Mod3", separator=>'.'),
+                  [qw/Bar.Mod3/]);
+        is_deeply(complete_module(word=>"Bar.Mod3", separator=>'.'),
+                  [qw/Bar.Mod3/]);
+    };
 }
 
-# TODO test separator
 # TODO test find_prefix
 # TODO test find_pod
 # TODO test find_pm
