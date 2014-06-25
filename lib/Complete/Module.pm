@@ -100,7 +100,7 @@ sub complete_module {
         $pm = $word;
     }
     my $prefix = join "/", @$prefix0;
-    say "D:prefix0=[".join(",",@$prefix0)."] prefix=$prefix word=$word";
+    #say "D:prefix0=[".join(",",@$prefix0)."] prefix=$prefix word=$word";
 
     my $word_re = $ci ? qr/\A\Q$word/i : qr/\A\Q$word/;
 
@@ -112,7 +112,7 @@ sub complete_module {
         my $cwd = getcwd();
         my $j;
         for my $dir (@INC) {
-            say "D:dir=$dir";
+            #say "D:dir=$dir";
             next if ref($dir);
             chdir $cwd if $j++;
             chdir $dir or next;
@@ -120,7 +120,7 @@ sub complete_module {
             local @_built_prefix;
             $dig = sub {
                 my $i = shift;
-                say "  D:i=$i, built_prefix=".join("/", @_built_prefix).", cwd=".getcwd();
+                #say "D:  i=$i, built_prefix=".join("/", @_built_prefix).", cwd=".getcwd();
                 opendir my($dh), "." or return;
                 for my $e (readdir $dh) {
                     next if $e eq '.' || $e eq '..';
@@ -151,7 +151,6 @@ sub complete_module {
             push @dirs, [$dir, join($sep, @$prefix0) . (@$prefix0 ? $sep:'')];
         }
     }
-    use DD; dd @dirs;
 
     my @res;
     for my $e (@dirs) {
@@ -162,9 +161,9 @@ sub complete_module {
             #say "D:$dir <$e>";
             next if $e =~ /\A\.\.?/;
             my $is_dir = (-d "$dir/$e"); # stat once
-            #say "  D:<$e> is dir" if $is_dir;
+            #say "D:  <$e> is dir" if $is_dir;
             if ($find_prefix && $is_dir) {
-                #say "  D:<$e> $word_re";
+                #say "D:  <$e> $word_re";
                 push @res, $resprefix . $e . $sep if $e =~ $word_re;
             }
             my $f;
