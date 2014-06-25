@@ -78,6 +78,7 @@ _
     result_naked => 1,
 };
 sub complete_module {
+    #say "D:complete_module called ".join(", ", @_);
     my %args = @_;
 
     my $word = $args{word} // '';
@@ -163,7 +164,7 @@ sub complete_module {
             my $is_dir = (-d "$dir/$e"); # stat once
             #say "D:  <$e> is dir" if $is_dir;
             if ($find_prefix && $is_dir) {
-                #say "D:  <$e> $word_re";
+                #say "D:  <$e> $word_re? ".($e =~ $word_re ? 1:0);
                 push @res, $resprefix . $e . $sep if $e =~ $word_re;
             }
             my $f;
@@ -183,6 +184,7 @@ sub complete_module {
 
     }
 
+    #say "D:res=".join(", ", @res);
     [sort(uniq(@res))];
 }
 
