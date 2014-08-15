@@ -1,5 +1,8 @@
 package Complete::Module;
 
+# DATE
+# VERSION
+
 use 5.010001;
 use strict;
 use warnings;
@@ -11,9 +14,6 @@ our %SPEC;
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(complete_module);
-
-# VERSION
-# DATE
 
 our @_built_prefix;
 
@@ -74,6 +74,19 @@ _
             schema  => 'bool*',
             default => 1,
         },
+        ns_prefix => {
+            summary => 'Namespace prefix',
+            schema  => 'str*',
+            description => <<'_',
+
+This is useful if you want to complete module under a specific namespace
+(instead of the root). For example, if you set `ns_prefix` to
+`Dist::Zilla::Plugin` (or `Dist::Zilla::Plugin::`) and word is `F`, you can get
+`['FakeRelease', 'FileFinder::', 'FinderCode']` (those are modules under the
+`Dist::Zilla::Plugin::` namespace).
+
+_
+        },
     },
     result_naked => 1,
 };
@@ -91,6 +104,13 @@ sub complete_module {
     my $find_prefix  = $args{find_prefix} // 1;
 
     my $sep_re = qr!(?:::|/|\Q$sep\E)!;
+
+    my $ns_prefix = $args{ns_prefix} // '';
+    if (length $ns_prefix) {
+        $ns_prefix =~ s!$sep_re\z!!;
+        $ns_prefix =~ s!$sep_re!$sep!g;
+        $word = "$ns_prefix$sep$word";
+    }
 
     my ($prefix0, $pm);
     if ($word =~ m!(.+)$sep_re(.*)!) {
@@ -182,6 +202,12 @@ sub complete_module {
             }
         }
 
+    }
+
+    if (length $ns_prefix) {
+        for (@res) {
+            substr($_, 0, length($ns_prefix)+length($sep)) = '';
+        }
     }
 
     #say "D:res=".join(", ", @res);
