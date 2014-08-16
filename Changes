@@ -1,8 +1,8 @@
 Revision history for Complete-Module
 
-0.04     2014-08-15 (SHARYANTO) - Happy 19th CPAN Day! (not yet released)
+0.04     2014-08-16 (SHARYANTO) - Happy 19th CPAN Day!
 
-         - Add option: ns_prefix
+         - Add option: ns_prefix.
 
 
 0.03     2014-06-25 (SHARYANTO)
