@@ -215,7 +215,7 @@ sub complete_module {
 }
 
 1;
-#ABSTRACT: Complete Perl module names
+#ABSTRACT:
 
 =head1 SYNOPSIS
 
