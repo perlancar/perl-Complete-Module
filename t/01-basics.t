@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Complete::Module qw(complete_module);
+use Complete::Path;
 use File::chdir;
 use File::Slurp::Tiny qw(write_file);
 use File::Temp qw(tempdir);
