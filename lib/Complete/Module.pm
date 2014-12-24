@@ -7,6 +7,7 @@ use 5.010001;
 use strict;
 use warnings;
 
+use Complete;
 use Cwd;
 use List::MoreUtils qw(uniq);
 
@@ -95,7 +96,7 @@ sub complete_module {
     my %args = @_;
 
     my $word = $args{word} // '';
-    my $ci   = $args{ci};
+    my $ci   = $args{ci} // $Complete::OPT_CI;
     my $sep  = $args{separator} // '::';
 
     my $find_pm      = $args{find_pm}     // 1;
