@@ -50,7 +50,7 @@ my $dir = tempdir(CLEANUP => 1);
             result=>[qw/Type::T1 Type::T2 Type::T3 Type::T4 Type::T5::/]);
     };
 
-    subtest "opt: map_case" => sub {
+    subtest "opt: exp_im_path" => sub {
         test_complete(args=>{word=>"B::M", map_case=>1},
                       result=>[qw/Bar::M1:: Bar::M2:: Bar::Mod3/]);
     };
