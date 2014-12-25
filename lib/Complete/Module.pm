@@ -97,6 +97,8 @@ sub complete_module {
     my $map_case    = $args{map_case} // $Complete::OPT_MAP_CASE;
     my $exp_im_path = $args{exp_im_path} // $Complete::OPT_EXP_IM_PATH;
     my $sep  = $args{separator} // '::';
+    my $ns_prefix = $args{ns_prefix} // '';
+    $ns_prefix =~ s/(::)+\z//;
 
     my $find_pm      = $args{find_pm}     // 1;
     my $find_pmc     = $args{find_pmc}    // 1;
@@ -106,7 +108,7 @@ sub complete_module {
     Complete::Path::complete_path(
         word => $word,
         ci => $ci, map_case => $map_case, exp_im_path => $exp_im_path,
-        starting_path => $args{ns_prefix},
+        starting_path => $ns_prefix,
         list_func => sub {
             my ($path, $intdir, $isint) = @_;
             (my $fspath = $path) =~ s!::!/!g;
