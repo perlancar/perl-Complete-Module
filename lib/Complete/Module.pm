@@ -131,7 +131,7 @@ sub complete_module {
             [sort(uniq(@res))];
         },
         path_sep => '::',
-        is_dir_func => sub { -d $_[0] },
+        is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
     );
 }
 
