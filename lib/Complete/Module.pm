@@ -178,6 +178,7 @@ sub complete_module {
 
     for (@$res) { s/::/$sep/g }
 
+    $res = { words=>$res, path_sep=>$sep };
     #$log->tracef('[compmod] Leaving complete_module(), result=<%s>', $res);
     $res;
 }
