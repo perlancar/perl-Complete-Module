@@ -134,7 +134,6 @@ sub complete_module {
             if ($tmp =~ /\A\Q$_\E(?:(\Q$sep\E).*|\z)/) {
                 substr($word, 0, length($_) + length($1 // '')) =
                     $OPT_SHORTCUT_PREFIXES->{$_};
-                say "D:word=$word";
                 last;
             }
         }
