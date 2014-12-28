@@ -8,7 +8,6 @@ use strict;
 use warnings;
 
 use Complete;
-use Cwd;
 use List::MoreUtils qw(uniq);
 
 our %SPEC;
@@ -16,11 +15,22 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(complete_module);
 
-our @_built_prefix;
+our $OPT_SHORTCUTS;
+if ($ENV{COMPLETE_MODULE_OPT_SHORTCUTS}) {
+    $OPT_SHORTCUTS = { split /=|;/, $ENV{COMPLETE_MODULE_OPT_SHORTCUTS} };
+} else {
+    $OPT_SHORTCUTS = {
+        dzb => 'Dist/Zilla/PluginBundle/',
+        dzp => 'Dist/Zilla/Plugin/',
+        pwb => 'Pod/Weaver/PluginBundle/',
+        pwp => 'Pod/Weaver/Plugin/',
+        pws => 'Pod/Weaver/Section/',
+    };
+}
 
 $SPEC{complete_module} = {
     v => 1.1,
-    summary => 'Complete Perl module names',
+    summary => 'Complete with installed Perl module names',
     description => <<'_',
 
 For each directory in `@INC` (coderefs are ignored), find Perl modules and
@@ -32,7 +42,9 @@ This function has a bit of overlapping functionality with `Module::List`, but
 this function is geared towards shell tab completion. Compared to
 `Module::List`, here are some differences: 1) list modules where prefix is
 incomplete; 2) interface slightly different; 3) (currently) doesn't do
-recursing.
+recursing; 4) contains conveniences for completion, e.g. map casing, expand
+intermediate paths (see `Complete` for more details on those features),
+autoselection of path separator character, some shortcuts, and so on.
 
 _
     args => {
@@ -96,9 +108,28 @@ sub complete_module {
     my $ci          = $args{ci} // $Complete::OPT_CI;
     my $map_case    = $args{map_case} // $Complete::OPT_MAP_CASE;
     my $exp_im_path = $args{exp_im_path} // $Complete::OPT_EXP_IM_PATH;
-    my $sep  = $args{separator} // '::';
     my $ns_prefix = $args{ns_prefix} // '';
     $ns_prefix =~ s/(::)+\z//;
+
+    # find shortcuts
+    {
+        my $tmp = lc $word;
+        if ($OPT_SHORTCUTS->{$tmp}) {
+            $word = $OPT_SHORTCUTS->{$tmp};
+        }
+    }
+
+    # convenience: allow Foo/Bar.{pm,pod,pmc}
+    $word =~ s/\.(pm|pmc|pod)\z//;
+
+    # convenience (and compromise): if word doesn't contain :: we use the
+    # "safer" separator /, but if already contains '::' we use '::'. (Can also
+    # use '.' if user uses that.) Using "::" in bash means user needs to use
+    # quote (' or ") to make completion behave as expected since : is by default
+    # a word break character in bash/readline.
+    my $sep = $word =~ /::/ ? '::' :
+        $word =~ /\./ ? '.' : '/';
+    $word =~ s!(::|/|\.)!$sep!g;
 
     my $find_pm      = $args{find_pm}     // 1;
     my $find_pmc     = $args{find_pmc}    // 1;
@@ -130,7 +161,7 @@ sub complete_module {
             }
             [sort(uniq(@res))];
         },
-        path_sep => '::',
+        path_sep => $sep,
         is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
     );
 }
@@ -141,7 +172,33 @@ sub complete_module {
 =head1 SYNOPSIS
 
  use Complete::Module qw(complete_module);
- my $res = complete_module(word => 'Te');
- # -> ['Template', 'Template::', 'Test', 'Test::', 'Text::']
+ my $res = complete_module(word => 'Text::A');
+ # -> ['Text::ANSI', 'Text::ANSITable', 'Text::ANSITable::', 'Text::Abbrev']
+
+
+=head1 SETTINGS
+
+=head2 C<$Complete::Module::OPT_SHORTCUTS> => hash
+
+Some shortcut prefixes. The default is:
+
+# CODE: $Complete::Module::Shortcuts
+
+If user types one of the keys, it will be replaced with the matching value from
+this hash.
+
+
+=head1 ENVIRONMENT
+
+=head2 C<COMPLETE_MODULE_OPT_SHORTCUTS> => str
+
+Can be used to set the default for C<$Complete::Module::Shortcuts>. It should be
+in the form of:
+
+ shortcut1=Value1;shortcut2=Value2;...
+
+For example:
+
+ dzp=Dist/Zilla/Plugin/;pwp=Pod/Weaver/Plugin/
 
 =cut
