@@ -129,14 +129,14 @@ sub complete_module {
     # a word break character in bash/readline.
     my $sep = $word =~ /::/ ? '::' :
         $word =~ /\./ ? '.' : '/';
-    $word =~ s!(::|/|\.)!$sep!g;
+    $word =~ s!(::|/|\.)!::!g;
 
     my $find_pm      = $args{find_pm}     // 1;
     my $find_pmc     = $args{find_pmc}    // 1;
     my $find_pod     = $args{find_pod}    // 1;
     my $find_prefix  = $args{find_prefix} // 1;
 
-    Complete::Path::complete_path(
+    my $res = Complete::Path::complete_path(
         word => $word,
         ci => $ci, map_case => $map_case, exp_im_path => $exp_im_path,
         starting_path => $ns_prefix,
@@ -161,9 +161,13 @@ sub complete_module {
             }
             [sort(uniq(@res))];
         },
-        path_sep => $sep,
+        path_sep => '::',
         is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
     );
+
+    for (@$res) { s/::/$sep/g }
+
+    $res;
 }
 
 1;
