@@ -122,15 +122,21 @@ sub complete_module {
     # a word break character in bash/readline.
     my $sep = $word =~ /::/ ? '::' :
         $word =~ /\./ ? '.' : '/';
-    $word =~ s!(::|/|\.)!::!g;
 
     # find shortcut prefixes
     {
         my $tmp = lc $word;
-        if ($OPT_SHORTCUT_PREFIXES->{$tmp}) {
-            $word = $OPT_SHORTCUT_PREFIXES->{$tmp};
+        for (keys %$OPT_SHORTCUT_PREFIXES) {
+            if ($tmp =~ /\A\Q$_\E(?:(\Q$sep\E).*|\z)/) {
+                substr($word, 0, length($_) + length($1 // '')) =
+                    $OPT_SHORTCUT_PREFIXES->{$_};
+                say "D:word=$word";
+                last;
+            }
         }
     }
+
+    $word =~ s!(::|/|\.)!::!g;
 
     my $find_pm      = $args{find_pm}     // 1;
     my $find_pmc     = $args{find_pmc}    // 1;
