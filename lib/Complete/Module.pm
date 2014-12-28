@@ -15,11 +15,12 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(complete_module);
 
-our $OPT_SHORTCUTS;
-if ($ENV{COMPLETE_MODULE_OPT_SHORTCUTS}) {
-    $OPT_SHORTCUTS = { split /=|;/, $ENV{COMPLETE_MODULE_OPT_SHORTCUTS} };
+our $OPT_SHORTCUT_PREFIXES;
+if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
+    $OPT_SHORTCUT_PREFIXES =
+        { split /=|;/, $ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES} };
 } else {
-    $OPT_SHORTCUTS = {
+    $OPT_SHORTCUT_PREFIXES = {
         dzb => 'Dist/Zilla/PluginBundle/',
         dzp => 'Dist/Zilla/Plugin/',
         pwb => 'Pod/Weaver/PluginBundle/',
@@ -111,14 +112,6 @@ sub complete_module {
     my $ns_prefix = $args{ns_prefix} // '';
     $ns_prefix =~ s/(::)+\z//;
 
-    # find shortcuts
-    {
-        my $tmp = lc $word;
-        if ($OPT_SHORTCUTS->{$tmp}) {
-            $word = $OPT_SHORTCUTS->{$tmp};
-        }
-    }
-
     # convenience: allow Foo/Bar.{pm,pod,pmc}
     $word =~ s/\.(pm|pmc|pod)\z//;
 
@@ -130,6 +123,14 @@ sub complete_module {
     my $sep = $word =~ /::/ ? '::' :
         $word =~ /\./ ? '.' : '/';
     $word =~ s!(::|/|\.)!::!g;
+
+    # find shortcut prefixes
+    {
+        my $tmp = lc $word;
+        if ($OPT_SHORTCUT_PREFIXES->{$tmp}) {
+            $word = $OPT_SHORTCUT_PREFIXES->{$tmp};
+        }
+    }
 
     my $find_pm      = $args{find_pm}     // 1;
     my $find_pmc     = $args{find_pmc}    // 1;
@@ -182,11 +183,11 @@ sub complete_module {
 
 =head1 SETTINGS
 
-=head2 C<$Complete::Module::OPT_SHORTCUTS> => hash
+=head2 C<$Complete::Module::OPT_SHORTCUT_PREFIXES> => hash
 
-Some shortcut prefixes. The default is:
+Shortcut prefixes. The default is:
 
-# CODE: $Complete::Module::Shortcuts
+# CODE: $Complete::Module::OPT_SHORTCUT_PREFIXES
 
 If user types one of the keys, it will be replaced with the matching value from
 this hash.
@@ -194,10 +195,10 @@ this hash.
 
 =head1 ENVIRONMENT
 
-=head2 C<COMPLETE_MODULE_OPT_SHORTCUTS> => str
+=head2 C<COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES> => str
 
-Can be used to set the default for C<$Complete::Module::Shortcuts>. It should be
-in the form of:
+Can be used to set the default for C<$Complete::Module::OPT_SHORTCUT_PREFIXES>.
+It should be in the form of:
 
  shortcut1=Value1;shortcut2=Value2;...
 
