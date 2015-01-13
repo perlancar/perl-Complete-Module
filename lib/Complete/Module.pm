@@ -65,6 +65,9 @@ _
         exp_im_path => {
             schema => 'bool',
         },
+        dig_leaf => {
+            summary => 'bool',
+        },
         find_pm => {
             summary => 'Whether to find .pm files',
             schema  => 'bool*',
@@ -113,6 +116,7 @@ sub complete_module {
     my $ci          = $args{ci} // $Complete::OPT_CI;
     my $map_case    = $args{map_case} // $Complete::OPT_MAP_CASE;
     my $exp_im_path = $args{exp_im_path} // $Complete::OPT_EXP_IM_PATH;
+    my $dig_leaf    = $args{dig_leaf} // $Complete::OPT_DIG_LEAF;
     my $ns_prefix = $args{ns_prefix} // '';
     $ns_prefix =~ s/(::)+\z//;
 
@@ -149,7 +153,12 @@ sub complete_module {
     #$log->tracef('[compmod] invoking complete_path, word=<%s>', $word);
     my $res = Complete::Path::complete_path(
         word => $word,
-        ci => $ci, map_case => $map_case, exp_im_path => $exp_im_path,
+
+        ci => $ci,
+        map_case => $map_case,
+        exp_im_path => $exp_im_path,
+        dig_leaf=>$dig_leaf,
+
         starting_path => $ns_prefix,
         list_func => sub {
             my ($path, $intdir, $isint) = @_;
