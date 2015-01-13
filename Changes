@@ -1,5 +1,12 @@
 Revision history for Complete-Module
 
+0.15    2015-01-13 (PERLANCAR)
+
+	- Add option: dig_leaf.
+
+	- Adjust to Complete 0.11 & Complete::Path 0.12.
+
+
 0.14    2015-01-09 (PERLANCAR)
 
 	- No functional changes.
