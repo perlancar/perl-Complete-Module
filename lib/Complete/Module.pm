@@ -59,6 +59,19 @@ _
             summary => 'Whether to do case-insensitive search',
             schema  => 'bool*',
         },
+        path_sep => {
+            summary => 'Path separator',
+            schema  => 'str*',
+            description => <<'_',
+
+For convenience in shell (bash) completion, instead of defaulting to `::` all
+the time, will look at `word`. If word does not contain any `::` then will
+default to `/`. This is because `::` (contains colon) is rather problematic as
+it is by default a word-break character in bash and the word needs to be quoted
+to avoid word-breaking by bash.
+
+_
+        },
         map_case => {
             schema => 'bool',
         },
@@ -128,8 +141,11 @@ sub complete_module {
     # use '.' if user uses that.) Using "::" in bash means user needs to use
     # quote (' or ") to make completion behave as expected since : is by default
     # a word break character in bash/readline.
-    my $sep = $word =~ /::/ ? '::' :
-        $word =~ /\./ ? '.' : '/';
+    my $sep = $args{path_sep};
+    unless (defined $sep) {
+        $sep = $word =~ /::/ ? '::' :
+            $word =~ /\./ ? '.' : '/';
+    }
 
     # find shortcut prefixes
     {
