@@ -24,8 +24,10 @@ if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
     $OPT_SHORTCUT_PREFIXES = {
         dzb => 'Dist/Zilla/PluginBundle/',
         dzp => 'Dist/Zilla/Plugin/',
+        dzr => 'Dist/Zilla/Role/',
         pwb => 'Pod/Weaver/PluginBundle/',
         pwp => 'Pod/Weaver/Plugin/',
+        pwr => 'Pod/Weaver/Role/',
         pws => 'Pod/Weaver/Section/',
     };
 }
