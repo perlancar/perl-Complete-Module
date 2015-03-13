@@ -1,5 +1,11 @@
 Revision history for Complete-Module
 
+0.17    2015-03-13 (PERLANCAR)
+
+	- Add shortcut prefixes: pwr (Pod::Weaver::Role) & dzr
+	  (Dist::Zilla::Role).
+
+
 0.16    2015-03-03 (PERLANCAR)
 
 	- Add option: path_sep.
