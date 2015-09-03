@@ -8,7 +8,7 @@ use strict;
 use warnings;
 #use Log::Any '$log';
 
-use Complete;
+use Complete::Setting;
 use List::MoreUtils qw(uniq);
 
 our %SPEC;
@@ -128,10 +128,10 @@ sub complete_module {
     #$log->tracef('[compmod] Entering complete_module(), word=<%s>', $word);
     #$log->tracef('[compmod] args=%s', \%args);
 
-    my $ci          = $args{ci} // $Complete::OPT_CI;
-    my $map_case    = $args{map_case} // $Complete::OPT_MAP_CASE;
-    my $exp_im_path = $args{exp_im_path} // $Complete::OPT_EXP_IM_PATH;
-    my $dig_leaf    = $args{dig_leaf} // $Complete::OPT_DIG_LEAF;
+    my $ci          = $args{ci} // $Complete::Setting::OPT_CI;
+    my $map_case    = $args{map_case} // $Complete::Setting::OPT_MAP_CASE;
+    my $exp_im_path = $args{exp_im_path} // $Complete::Setting::OPT_EXP_IM_PATH;
+    my $dig_leaf    = $args{dig_leaf} // $Complete::Setting::OPT_DIG_LEAF;
     my $ns_prefix = $args{ns_prefix} // '';
     $ns_prefix =~ s/(::)+\z//;
 

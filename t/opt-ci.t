@@ -38,8 +38,8 @@ unless (fs_is_cs($dir)) {
 {
     no warnings 'once';
     local @INC = ($dir, @INC);
-    local $Complete::OPT_CI = 0;
-    local $Complete::OPT_DIG_LEAF = 0;
+    local $Complete::Setting::OPT_CI = 0;
+    local $Complete::Setting::OPT_DIG_LEAF = 0;
     test_complete(args=>{word=>"$prefix/f"},
                   result=>[sort +(
                       "$prefix/foo/",
