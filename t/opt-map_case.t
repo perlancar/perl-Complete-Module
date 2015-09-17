@@ -27,6 +27,8 @@ my $dir = tempdir(CLEANUP => 0);
 
 {
     local @INC = ($dir, @INC);
+    no warnings 'once';
+    local $Complete::Setting::OPT_FUZZY = 0;
     test_complete(args=>{word=>"$prefix/Foo/"},
                   result=>[sort +(
                       "$prefix/Foo/Bar_1/",

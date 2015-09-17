@@ -39,29 +39,30 @@ unless (fs_is_cs($dir)) {
     no warnings 'once';
     local @INC = ($dir, @INC);
     local $Complete::Setting::OPT_CI = 0;
+    local $Complete::Setting::OPT_FUZZY = 0;
     local $Complete::Setting::OPT_DIG_LEAF = 0;
     test_complete(args=>{word=>"$prefix/f"},
-                  result=>[sort +(
+                  result=>[
                       "$prefix/foo/",
-                  )]);
+                  ]);
     test_complete(args=>{word=>"$prefix/f", ci=>1},
-                  result=>[sort +(
+                  result=>[
                       "$prefix/Foo/",
                       "$prefix/foo/",
-                  )]);
+                  ]);
     test_complete(args=>{word=>"$prefix/foo/bar", ci=>1},
-                  result=>[sort +(
+                  result=>[
                       "$prefix/Foo/Bar",
                       "$prefix/Foo/bar",
                       "$prefix/Foo/Bar/",
                       "$prefix/Foo/bar/",
                       "$prefix/foo/Bar/",
                       "$prefix/foo/bar/",
-                  )]);
+                  ]);
     test_complete(args=>{word=>"$prefix/foo/bar/baz", ci=>1},
-                  result=>[sort +(
+                  result=>[
                       "$prefix/Foo/Bar/Baz",
-                  )]);
+                  ]);
 }
 
 DONE_TESTING:

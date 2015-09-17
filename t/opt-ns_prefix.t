@@ -28,6 +28,7 @@ my $dir = tempdir(CLEANUP => 0);
     no warnings 'once';
 
     local @INC = ($dir, @INC);
+    local $Complete::Setting::OPT_FUZZY = 0;
     local $Complete::Setting::OPT_DIG_LEAF = 0;
     test_complete(args=>{word=>"", ns_prefix=>"$prefix/Foo"},
                   result=>[sort +(

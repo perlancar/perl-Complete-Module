@@ -61,6 +61,10 @@ _
             summary => 'Whether to do case-insensitive search',
             schema  => 'bool*',
         },
+        fuzzy => {
+            summary => 'Whether to do fuzzy matching',
+            schema  => ['int*', min=>0],
+        },
         path_sep => {
             summary => 'Path separator',
             schema  => 'str*',
@@ -129,6 +133,7 @@ sub complete_module {
     #$log->tracef('[compmod] args=%s', \%args);
 
     my $ci          = $args{ci} // $Complete::Setting::OPT_CI;
+    my $fuzzy       = $args{fuzzy} // $Complete::Setting::OPT_FUZZY;
     my $map_case    = $args{map_case} // $Complete::Setting::OPT_MAP_CASE;
     my $exp_im_path = $args{exp_im_path} // $Complete::Setting::OPT_EXP_IM_PATH;
     my $dig_leaf    = $args{dig_leaf} // $Complete::Setting::OPT_DIG_LEAF;
@@ -173,6 +178,7 @@ sub complete_module {
         word => $word,
 
         ci => $ci,
+        fuzzy => $fuzzy,
         map_case => $map_case,
         exp_im_path => $exp_im_path,
         dig_leaf=>$dig_leaf,

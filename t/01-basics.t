@@ -40,6 +40,8 @@ my $dir = tempdir(CLEANUP => 1);
 
 {
     local @INC = ($dir, @INC);
+    no warnings 'once';
+    local $Complete::Setting::OPT_FUZZY = 0;
     subtest "basics" => sub {
         test_complete(args=>{word=>"$prefix"},
                       result=>[
