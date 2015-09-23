@@ -23,9 +23,11 @@ if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
 } else {
     $OPT_SHORTCUT_PREFIXES = {
         df  => 'DateTime/Format/',
+        dz  => 'Dist/Zilla/',
         dzb => 'Dist/Zilla/PluginBundle/',
         dzp => 'Dist/Zilla/Plugin/',
         dzr => 'Dist/Zilla/Role/',
+        pw  => 'Pod/Weaver/',
         pwb => 'Pod/Weaver/PluginBundle/',
         pwp => 'Pod/Weaver/Plugin/',
         pwr => 'Pod/Weaver/Role/',
