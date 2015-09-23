@@ -22,6 +22,7 @@ if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
         { split /=|;/, $ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES} };
 } else {
     $OPT_SHORTCUT_PREFIXES = {
+        df  => 'DateTime/Format/',
         dzb => 'Dist/Zilla/PluginBundle/',
         dzp => 'Dist/Zilla/Plugin/',
         dzr => 'Dist/Zilla/Role/',
