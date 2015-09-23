@@ -22,16 +22,37 @@ if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
         { split /=|;/, $ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES} };
 } else {
     $OPT_SHORTCUT_PREFIXES = {
+        #cp  => 'Catalyst/Plugin/' # candidate
         df  => 'DateTime/Format/',
+        #dp  => 'Dancer/Plugin/', # candidate
+        #d2p  => 'Dancer2/Plugin/', # candidate
         dz  => 'Dist/Zilla/',
         dzb => 'Dist/Zilla/PluginBundle/',
         dzp => 'Dist/Zilla/Plugin/',
         dzr => 'Dist/Zilla/Role/',
+        #pa  => 'Plack/App/', # candidate
+        #pc  => 'POE/Component/', # candidate
+        #pc  => 'Perl/Critic/', # candidate?
+        #pcp => 'Perl/Critic/Policy/', # candidate?
+        #pd  => 'Padre/Document/', # candidate
+        #pm  => 'Plack/Middleware/', # candidate
+        #pp  => 'Padre/Plugin/', # candidate
         pw  => 'Pod/Weaver/',
         pwb => 'Pod/Weaver/PluginBundle/',
         pwp => 'Pod/Weaver/Plugin/',
         pwr => 'Pod/Weaver/Role/',
         pws => 'Pod/Weaver/Section/',
+        #rtx => 'RT/Extension/', # candidate
+        #se  => 'Search/Elasticsearch/', # candidate
+        #sec => 'Search/Elasticsearch/Client/', # candidate
+        #ser => 'Search/Elasticsearch/Role/', # candidate
+        #tp  => 'Template/Plugin/', # candidate
+        #tw  => 'Tickit/Widget/', # candidate
+
+        # MooseX, MooX
+        # Moose::Exception
+        # Finance::Bank
+        # Mojo::*, MojoX::*, Mojolicious::*
     };
 }
 
