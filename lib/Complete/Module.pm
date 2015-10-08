@@ -109,7 +109,7 @@ _
             schema => 'bool',
         },
         dig_leaf => {
-            summary => 'bool',
+            schema => 'bool',
         },
         find_pm => {
             summary => 'Whether to find .pm files',
