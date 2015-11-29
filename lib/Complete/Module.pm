@@ -8,7 +8,7 @@ use strict;
 use warnings;
 #use Log::Any '$log';
 
-use Complete::Setting;
+use Complete::Common qw(:all);
 use List::MoreUtils qw(uniq);
 
 our %SPEC;
@@ -76,19 +76,7 @@ autoselection of path separator character, some shortcuts, and so on.
 
 _
     args => {
-        word => {
-            schema => 'str*',
-            req => 1,
-            pos => 0,
-        },
-        ci => {
-            summary => 'Whether to do case-insensitive search',
-            schema  => 'bool*',
-        },
-        fuzzy => {
-            summary => 'Whether to do fuzzy matching',
-            schema  => ['int*', min=>0],
-        },
+        %arg_word,
         path_sep => {
             summary => 'Path separator',
             schema  => 'str*',
@@ -101,15 +89,6 @@ it is by default a word-break character in bash and the word needs to be quoted
 to avoid word-breaking by bash.
 
 _
-        },
-        map_case => {
-            schema => 'bool',
-        },
-        exp_im_path => {
-            schema => 'bool',
-        },
-        dig_leaf => {
-            schema => 'bool',
         },
         find_pm => {
             summary => 'Whether to find .pm files',
@@ -156,11 +135,6 @@ sub complete_module {
     #$log->tracef('[compmod] Entering complete_module(), word=<%s>', $word);
     #$log->tracef('[compmod] args=%s', \%args);
 
-    my $ci          = $args{ci} // $Complete::Setting::OPT_CI;
-    my $fuzzy       = $args{fuzzy} // $Complete::Setting::OPT_FUZZY;
-    my $map_case    = $args{map_case} // $Complete::Setting::OPT_MAP_CASE;
-    my $exp_im_path = $args{exp_im_path} // $Complete::Setting::OPT_EXP_IM_PATH;
-    my $dig_leaf    = $args{dig_leaf} // $Complete::Setting::OPT_DIG_LEAF;
     my $ns_prefix = $args{ns_prefix} // '';
     $ns_prefix =~ s/(::)+\z//;
 
@@ -200,13 +174,6 @@ sub complete_module {
     #$log->tracef('[compmod] invoking complete_path, word=<%s>', $word);
     my $res = Complete::Path::complete_path(
         word => $word,
-
-        ci => $ci,
-        fuzzy => $fuzzy,
-        map_case => $map_case,
-        exp_im_path => $exp_im_path,
-        dig_leaf=>$dig_leaf,
-
         starting_path => $ns_prefix,
         list_func => sub {
             my ($path, $intdir, $isint) = @_;
