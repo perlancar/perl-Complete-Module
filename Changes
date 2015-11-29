@@ -1,5 +1,14 @@
 Revision history for Complete-Module
 
+0.23    2015-11-29 (PERLANCAR)
+
+	- Updates to Complete::Common 0.21.
+
+        - [Removed] For more consistent user experience, remove per-function
+	  options ci/fuzzy/map_case/exp_im_path/dig_leaf, users are now
+	  encouraged to set these behaviors globally via Complete::Common.
+
+
 0.22    2015-10-08 (PERLANCAR)
 
 	- Add prefix shortcuts: dz (for Dist/Zilla/) and pw (for
