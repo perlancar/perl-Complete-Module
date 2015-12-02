@@ -2,7 +2,6 @@ use 5.010;
 use strict;
 use warnings;
 
-use Complete;
 use Complete::Module qw(complete_module);
 use Complete::Path;
 use Complete::Util qw(arrayify_answer);
