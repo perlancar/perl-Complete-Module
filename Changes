@@ -1,5 +1,12 @@
 Revision history for Complete-Module
 
+0.24    2015-12-02 (PERLANCAR)
+
+	- No functional changes.
+
+	- Remove old 'use' statement [CT].
+
+
 0.23    2015-11-29 (PERLANCAR)
 
 	- Updates to Complete::Common 0.21.
