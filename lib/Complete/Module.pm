@@ -242,4 +242,9 @@ For example:
 
  dzp=Dist/Zilla/Plugin/;pwp=Pod/Weaver/Plugin/
 
+
+=head1 SEE ALSO
+
+L<Complete::Perl>
+
 =cut
