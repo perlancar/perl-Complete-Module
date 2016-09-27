@@ -66,13 +66,13 @@ module prefixes which have `word` as prefix. So for example, given `Te` as
 `word`, will return e.g. `[Template, Template::, Term::, Test, Test::, Text::]`.
 Given `Text::` will return `[Text::ASCIITable, Text::Abbrev, ...]` and so on.
 
-This function has a bit of overlapping functionality with `Module::List`, but
-this function is geared towards shell tab completion. Compared to
-`Module::List`, here are some differences: 1) list modules where prefix is
-incomplete; 2) interface slightly different; 3) (currently) doesn't do
-recursing; 4) contains conveniences for completion, e.g. map casing, expand
-intermediate paths (see `Complete` for more details on those features),
-autoselection of path separator character, some shortcuts, and so on.
+This function has a bit of overlapping functionality with <pm:Module::List>, but
+this function is geared towards shell tab completion. Compared to Module::List,
+here are some differences: 1) list modules where prefix is incomplete; 2)
+interface slightly different; 3) (currently) doesn't do recursing; 4) contains
+conveniences for completion, e.g. map casing, expand intermediate paths (see
+`Complete` for more details on those features), autoselection of path separator
+character, some shortcuts, and so on.
 
 _
     args => {
