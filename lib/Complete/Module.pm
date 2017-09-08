@@ -9,7 +9,7 @@ use warnings;
 #use Log::Any '$log';
 
 use Complete::Common qw(:all);
-use List::MoreUtils qw(uniq);
+use List::Util qw(uniq);
 
 our %SPEC;
 require Exporter;
