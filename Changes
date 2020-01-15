@@ -165,7 +165,7 @@
 	- Follow convention of Complete 0.06.
 
 
-0.04     2014-08-16 (SHARYANTO) - Happy 19th CPAN Day!
+0.04     2014-08-16  Released-By: SHARYANTO; Note: Happy 19th CPAN Day!
 
          - Add option: ns_prefix.
 
@@ -183,3 +183,4 @@
 0.01     2014-06-22  Released-By: SHARYANTO
 
          - First release.
+
