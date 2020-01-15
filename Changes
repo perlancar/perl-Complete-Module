@@ -147,7 +147,7 @@
         - Fix typo in test.
 
 
-0.06    2014-12-25 (PERLANCAR) - ♪ so this is xmas
+0.06    2014-12-25  Released-By: PERLANCAR; Note: ♪ so this is xmas
 
 	- Use Complete::Path to avoid code duplication and gain features like
           expand intermediate path (exp_im_path option) and map case (map_case
@@ -183,4 +183,5 @@
 0.01     2014-06-22  Released-By: SHARYANTO
 
          - First release.
+
 
