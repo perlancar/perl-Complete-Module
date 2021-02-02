@@ -123,6 +123,9 @@ This is useful if you want to complete module under a specific namespace
 
 _
         },
+        recurse => {
+            schema => 'bool*',
+        },
     },
     result_naked => 1,
 };
@@ -198,6 +201,7 @@ sub complete_module {
         },
         path_sep => '::',
         is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
+        recurse => $args{recurse},
     );
 
     for (@$res) { s/::/$sep/g }
