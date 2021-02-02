@@ -56,6 +56,70 @@ if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
     };
 }
 
+our %args_module_common = (
+    %arg_word,
+    path_sep => {
+        summary => 'Path separator',
+        schema  => 'str*',
+        description => <<'_',
+
+For convenience in shell (bash) completion, instead of defaulting to `::` all
+the time, will look at `word`. If word does not contain any `::` then will
+default to `/`. This is because `::` (contains colon) is rather problematic as
+it is by default a word-break character in bash and the word needs to be quoted
+to avoid word-breaking by bash.
+
+_
+    },
+    find_pm => {
+        summary => 'Whether to find .pm files',
+        schema  => 'bool*',
+        default => 1,
+    },
+    find_pod => {
+        summary => 'Whether to find .pod files',
+        schema  => 'bool*',
+        default => 1,
+    },
+    find_pmc => {
+        summary => 'Whether to find .pmc files',
+        schema  => 'bool*',
+        default => 1,
+    },
+    find_prefix => {
+        summary => 'Whether to find module prefixes',
+        schema  => 'bool*',
+        default => 1,
+    },
+    ns_prefix => {
+        summary => 'Namespace prefix',
+        schema  => 'str*',
+        description => <<'_',
+
+This is useful if you want to complete module under a specific namespace
+(instead of the root). For example, if you set `ns_prefix` to
+`Dist::Zilla::Plugin` (or `Dist::Zilla::Plugin::`) and word is `F`, you can get
+`['FakeRelease', 'FileFinder::', 'FinderCode']` (those are modules under the
+`Dist::Zilla::Plugin::` namespace).
+
+_
+    },
+    recurse => {
+        schema => 'bool*',
+        cmdline_aliases => {r=>{}},
+    },
+    recurse_matching => {
+        schema => ['str*', in=>['level-by-level', 'all-at-once']],
+        default => 'level-by-level',
+    },
+    exclude_leaf => {
+        schema => 'bool*',
+    },
+    exclude_dir => {
+        schema => 'bool*',
+    },
+);
+
 $SPEC{complete_module} = {
     v => 1.1,
     summary => 'Complete with installed Perl module names',
@@ -76,56 +140,7 @@ character, some shortcuts, and so on.
 
 _
     args => {
-        %arg_word,
-        path_sep => {
-            summary => 'Path separator',
-            schema  => 'str*',
-            description => <<'_',
-
-For convenience in shell (bash) completion, instead of defaulting to `::` all
-the time, will look at `word`. If word does not contain any `::` then will
-default to `/`. This is because `::` (contains colon) is rather problematic as
-it is by default a word-break character in bash and the word needs to be quoted
-to avoid word-breaking by bash.
-
-_
-        },
-        find_pm => {
-            summary => 'Whether to find .pm files',
-            schema  => 'bool*',
-            default => 1,
-        },
-        find_pod => {
-            summary => 'Whether to find .pod files',
-            schema  => 'bool*',
-            default => 1,
-        },
-        find_pmc => {
-            summary => 'Whether to find .pmc files',
-            schema  => 'bool*',
-            default => 1,
-        },
-        find_prefix => {
-            summary => 'Whether to find module prefixes',
-            schema  => 'bool*',
-            default => 1,
-        },
-        ns_prefix => {
-            summary => 'Namespace prefix',
-            schema  => 'str*',
-            description => <<'_',
-
-This is useful if you want to complete module under a specific namespace
-(instead of the root). For example, if you set `ns_prefix` to
-`Dist::Zilla::Plugin` (or `Dist::Zilla::Plugin::`) and word is `F`, you can get
-`['FakeRelease', 'FileFinder::', 'FinderCode']` (those are modules under the
-`Dist::Zilla::Plugin::` namespace).
-
-_
-        },
-        recurse => {
-            schema => 'bool*',
-        },
+        %args_module_common,
     },
     result_naked => 1,
 };
@@ -202,6 +217,9 @@ sub complete_module {
         path_sep => '::',
         is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
         recurse => $args{recurse},
+        recurse_matching => $args{recurse_matching},
+        exclude_leaf => $args{exclude_leaf},
+        exclude_dir  => $args{exclude_dir},
     );
 
     for (@$res) { s/::/$sep/g }
