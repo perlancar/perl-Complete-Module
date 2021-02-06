@@ -56,70 +56,6 @@ if ($ENV{COMPLETE_MODULE_OPT_SHORTCUT_PREFIXES}) {
     };
 }
 
-our %args_module_common = (
-    %arg_word,
-    path_sep => {
-        summary => 'Path separator',
-        schema  => 'str*',
-        description => <<'_',
-
-For convenience in shell (bash) completion, instead of defaulting to `::` all
-the time, will look at `word`. If word does not contain any `::` then will
-default to `/`. This is because `::` (contains colon) is rather problematic as
-it is by default a word-break character in bash and the word needs to be quoted
-to avoid word-breaking by bash.
-
-_
-    },
-    find_pm => {
-        summary => 'Whether to find .pm files',
-        schema  => 'bool*',
-        default => 1,
-    },
-    find_pod => {
-        summary => 'Whether to find .pod files',
-        schema  => 'bool*',
-        default => 1,
-    },
-    find_pmc => {
-        summary => 'Whether to find .pmc files',
-        schema  => 'bool*',
-        default => 1,
-    },
-    find_prefix => {
-        summary => 'Whether to find module prefixes',
-        schema  => 'bool*',
-        default => 1,
-    },
-    ns_prefix => {
-        summary => 'Namespace prefix',
-        schema  => 'str*',
-        description => <<'_',
-
-This is useful if you want to complete module under a specific namespace
-(instead of the root). For example, if you set `ns_prefix` to
-`Dist::Zilla::Plugin` (or `Dist::Zilla::Plugin::`) and word is `F`, you can get
-`['FakeRelease', 'FileFinder::', 'FinderCode']` (those are modules under the
-`Dist::Zilla::Plugin::` namespace).
-
-_
-    },
-    recurse => {
-        schema => 'bool*',
-        cmdline_aliases => {r=>{}},
-    },
-    recurse_matching => {
-        schema => ['str*', in=>['level-by-level', 'all-at-once']],
-        default => 'level-by-level',
-    },
-    exclude_leaf => {
-        schema => 'bool*',
-    },
-    exclude_dir => {
-        schema => 'bool*',
-    },
-);
-
 $SPEC{complete_module} = {
     v => 1.1,
     summary => 'Complete with installed Perl module names',
@@ -140,7 +76,80 @@ character, some shortcuts, and so on.
 
 _
     args => {
-        %args_module_common,
+        %arg_word,
+        path_sep => {
+            summary => 'Path separator',
+            schema  => 'str*',
+            description => <<'_',
+
+For convenience in shell (bash) completion, instead of defaulting to `::` all
+the time, will look at `word`. If word does not contain any `::` then will
+default to `/`. This is because `::` (contains colon) is rather problematic as
+it is by default a word-break character in bash and the word needs to be quoted
+to avoid word-breaking by bash.
+
+_
+        },
+        find_pm => {
+            summary => 'Whether to find .pm files',
+            schema  => 'bool*',
+            default => 1,
+        },
+        find_pod => {
+            summary => 'Whether to find .pod files',
+            schema  => 'bool*',
+            default => 1,
+        },
+        find_pmc => {
+            summary => 'Whether to find .pmc files',
+            schema  => 'bool*',
+            default => 1,
+        },
+        find_prefix => {
+            summary => 'Whether to find module prefixes',
+            schema  => 'bool*',
+            default => 1,
+        },
+        ns_prefix => {
+            summary => 'Namespace prefix',
+            schema  => 'perl::modname*',
+            description => <<'_',
+
+This is useful if you want to complete module under a specific namespace
+(instead of the root). For example, if you set `ns_prefix` to
+`Dist::Zilla::Plugin` (or `Dist::Zilla::Plugin::`) and word is `F`, you can get
+`['FakeRelease', 'FileFinder::', 'FinderCode']` (those are modules under the
+`Dist::Zilla::Plugin::` namespace).
+
+_
+        },
+        ns_prefixes => {
+            summary => 'Namespace prefixes',
+            schema => ['array*', of=>'perl::modname*'],
+            description => <<'_',
+
+If you specify this instead of `ns_prefix`, then the routine will search from
+all the prefixes instead of just one.
+
+_
+        },
+        recurse => {
+            schema => 'bool*',
+            cmdline_aliases => {r=>{}},
+        },
+        recurse_matching => {
+            schema => ['str*', in=>['level-by-level', 'all-at-once']],
+            default => 'level-by-level',
+        },
+        exclude_leaf => {
+            schema => 'bool*',
+        },
+        exclude_dir => {
+            schema => 'bool*',
+        },
+    },
+    args_rels => {
+        choose_one => [qw/ns_prefix ns_prefixes/],
     },
     result_naked => 1,
 };
@@ -152,9 +161,6 @@ sub complete_module {
     my $word = $args{word} // '';
     #$log->tracef('[compmod] Entering complete_module(), word=<%s>', $word);
     #$log->tracef('[compmod] args=%s', \%args);
-
-    my $ns_prefix = $args{ns_prefix} // '';
-    $ns_prefix =~ s/(::)+\z//;
 
     # convenience: allow Foo/Bar.{pm,pod,pmc}
     $word =~ s/\.(pm|pmc|pod)\z//;
@@ -189,38 +195,55 @@ sub complete_module {
     my $find_pod     = $args{find_pod}    // 1;
     my $find_prefix  = $args{find_prefix} // 1;
 
-    #$log->tracef('[compmod] invoking complete_path, word=<%s>', $word);
-    my $res = Complete::Path::complete_path(
-        word => $word,
-        starting_path => $ns_prefix,
-        list_func => sub {
-            my ($path, $intdir, $isint) = @_;
-            (my $fspath = $path) =~ s!::!/!g;
-            my @res;
-            for my $inc (@INC) {
-                next if ref($inc);
-                my $dir = $inc . (length($fspath) ? "/$fspath" : "");
-                opendir my($dh), $dir or next;
-                for (readdir $dh) {
-                    next if $_ eq '.' || $_ eq '..';
-                    next unless /\A\w+(\.\w+)?\z/;
-                    my $is_dir = (-d "$dir/$_");
-                    next if $isint && !$is_dir;
-                    push @res, "$_\::" if $is_dir && ($isint || $find_prefix);
-                    push @res, $1 if /(.+)\.pm\z/  && $find_pm;
-                    push @res, $1 if /(.+)\.pmc\z/ && $find_pmc;
-                    push @res, $1 if /(.+)\.pod\z/ && $find_pod;
+    my @ns_prefixes  = $args{ns_prefixes} ? @{$args{ns_prefixes}} : ($args{ns_prefix});
+    my $res = [];
+    for my $ns_prefix (@ns_prefixes) {
+        $ns_prefix //= '';
+        $ns_prefix =~ s/(::)+\z//;
+
+        #$log->tracef('[compmod] invoking complete_path, word=<%s>', $word);
+        my $cp_res = Complete::Path::complete_path(
+            word => $word,
+            starting_path => $ns_prefix,
+            list_func => sub {
+                my ($path, $intdir, $isint) = @_;
+                (my $fspath = $path) =~ s!::!/!g;
+                my @res;
+                for my $inc (@INC) {
+                    next if ref($inc);
+                    my $dir = $inc . (length($fspath) ? "/$fspath" : "");
+                    opendir my($dh), $dir or next;
+                    for (readdir $dh) {
+                        next if $_ eq '.' || $_ eq '..';
+                        next unless /\A\w+(\.\w+)?\z/;
+                        my $is_dir = (-d "$dir/$_");
+                        next if $isint && !$is_dir;
+                        push @res, "$_\::" if $is_dir && ($isint || $find_prefix);
+                        push @res, $1 if /(.+)\.pm\z/  && $find_pm;
+                        push @res, $1 if /(.+)\.pmc\z/ && $find_pmc;
+                        push @res, $1 if /(.+)\.pod\z/ && $find_pod;
+                    }
                 }
-            }
-            [sort(uniq(@res))];
-        },
-        path_sep => '::',
-        is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
-        recurse => $args{recurse},
-        recurse_matching => $args{recurse_matching},
-        exclude_leaf => $args{exclude_leaf},
-        exclude_dir  => $args{exclude_dir},
-    );
+                [sort(uniq(@res))];
+            },
+            path_sep => '::',
+            is_dir_func => sub { }, # not needed, we already suffix "dirs" with ::
+            recurse => $args{recurse},
+            recurse_matching => $args{recurse_matching},
+            exclude_leaf => $args{exclude_leaf},
+            exclude_dir  => $args{exclude_dir},
+        );
+        push @$res, @$cp_res;
+    } # for $ns_prefix
+
+    # dedup
+    {
+        last unless @ns_prefixes > 1;
+        my $res_dedup = [];
+        my %seen;
+        for (@$res) { push @$res_dedup, $_ unless $seen{$_}++ }
+        $res = $res_dedup;
+    }
 
     for (@$res) { s/::/$sep/g }
 
